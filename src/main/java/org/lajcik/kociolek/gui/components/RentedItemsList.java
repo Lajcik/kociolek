@@ -29,12 +29,15 @@ public class RentedItemsList extends JList implements RentalListener {
 
     @Override
     public void itemReturned(Rental rental) {
-
+        for (Item item : rental.getRentedItems()) {
+            getMyModel().removeItem(item.getName(), rental.getTicketNumber());
+        }
     }
 
     @Override
     public void itemsChanged(Rental before, Rental after) {
-
+        itemReturned(before);
+        itemRented(after);
     }
 
     @Override
