@@ -43,25 +43,7 @@ public class RentalDialog extends JDialog implements ActionListener {
 
         setLocationRelativeTo(frame);
         setVisible(true);
-    }
-
-    private JPanel createCenterPanel(String... rentedItems) {
-        JPanel itemEditorPanel = new JPanel();
-        itemEditorPanel.setLayout(new BorderLayout());
-
-        addItemButton = new JButton("+");
-        addItemButton.addActionListener(this);
-        itemEditorPanel.add(Box.createHorizontalGlue(), BorderLayout.PAGE_END);
-        itemEditorPanel.add(addItemButton, BorderLayout.PAGE_END);
-
-        itemPanel = new JPanel();
-        itemEditorPanel.add(itemPanel, BorderLayout.CENTER);
-
-        for (String item : rentedItems) {
-            addItem(item);
-        }
-
-        return itemEditorPanel;
+        setResizable(false);
     }
 
     private JPanel createTopPanel(int ticketNumber) {
@@ -93,6 +75,22 @@ public class RentalDialog extends JDialog implements ActionListener {
         return bottomPanel;
     }
 
+    private JPanel createCenterPanel(String... rentedItems) {
+        itemPanel = new JPanel();
+        itemPanel.setLayout(new MigLayout("wrap 3, debug", "[7]7[fill]7[]"));
+
+        addItemButton = new JButton("+");
+        addItemButton.addActionListener(this);
+        itemPanel.add(Box.createHorizontalGlue(), "south");
+        itemPanel.add(addItemButton, "south");
+
+        for (String item : rentedItems) {
+            addItem(item);
+        }
+
+        return itemPanel;
+    }
+
     private void addItem(String item) {
         final JLabel lpLabel = new JLabel("x.");
         lpLabel.setName("LP");
@@ -107,7 +105,7 @@ public class RentalDialog extends JDialog implements ActionListener {
         final JButton removeThis = new JButton("-");
         itemPanel.add(lpLabel);
         itemPanel.add(itemName);
-        itemPanel.add(removeThis, "alignx trailing wrap");
+        itemPanel.add(removeThis);
         removeThis.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -122,13 +120,14 @@ public class RentalDialog extends JDialog implements ActionListener {
     private void refresh() {
         int i = 1;
         for (Component component : itemPanel.getComponents()) {
-            if (component.getName().equals("LP")) {
+            if ("LP".equals(component.getName())) {
                 JLabel lpLabel = (JLabel) component;
                 lpLabel.setText(i++ + ".");
             }
         }
         itemPanel.validate();
         itemPanel.repaint();
+        pack();
     }
 
     @Override
@@ -136,7 +135,7 @@ public class RentalDialog extends JDialog implements ActionListener {
         if (e.getSource() == saveButton) {
             List<String> items = new ArrayList<String>();
             for (Component component : itemPanel.getComponents()) {
-                if (component.getName().equals("ITEM")) {
+                if ("ITEM".equals(component.getName())) {
                     JTextField textField = (JTextField) component;
                     String item = textField.getText().trim();
                     if (!item.equals("")) {
@@ -148,16 +147,21 @@ public class RentalDialog extends JDialog implements ActionListener {
             setVisible(false);
             return;
         }
+
         if (e.getSource() == addItemButton) {
             addItem(null);
             refresh();
             return;
         }
+
         if (mode == Mode.EDIT && e.getSource() == updateButton) {
 
+            return;
         }
-        if (e.getSource() == cancelButton) {
 
+        if (e.getSource() == cancelButton) {
+            setVisible(false);
+            return;
         }
         throw new WtfException("Unexpected source: " + e.getSource() + " of event " + e);
     }

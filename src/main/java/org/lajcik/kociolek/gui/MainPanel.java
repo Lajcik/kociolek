@@ -27,7 +27,7 @@ public class MainPanel extends JPanel {
         rentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new RentalDialog(JOptionPane.getRootFrame(), ticketDispenser.getNextAvailableTicket());
+                new RentalDialog(null, ticketDispenser.getNextAvailableTicket());
             }
         });
 
