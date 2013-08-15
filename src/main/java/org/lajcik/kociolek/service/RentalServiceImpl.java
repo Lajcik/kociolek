@@ -1,9 +1,13 @@
 package org.lajcik.kociolek.service;
 
+import org.lajcik.kociolek.dao.ItemDao;
+import org.lajcik.kociolek.dao.RentalDao;
 import org.lajcik.kociolek.domain.Item;
 import org.lajcik.kociolek.domain.Rental;
 import org.lajcik.kociolek.util.TicketDispenser;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -11,8 +15,14 @@ import java.util.*;
  * @author lajcik
  */
 @Component
+@Transactional()
 public class RentalServiceImpl implements RentalService {
-    private Map<Integer, Rental> TMP = new HashMap<Integer, Rental>();
+
+    @Autowired
+    private RentalDao rentalDao;
+    @Autowired
+    private ItemDao itemDao;
+
     private TicketDispenser ticketDispenser = new TicketDispenser();
 
     private List<RentalListener> listeners = new ArrayList<RentalListener>();
@@ -42,7 +52,6 @@ public class RentalServiceImpl implements RentalService {
         Rental rental = new Rental();
         rental.setRentDate(new Date());
         rental.setTicketNumber(ticketNumber);
-        rental.setRented(true);
 
         for (String itemName : items) {
             // TODO: find or create item
@@ -51,9 +60,8 @@ public class RentalServiceImpl implements RentalService {
             rental.getRentedItems().add(item);
         }
 
-        // TODO: save
+        rentalDao.save(rental);
 
-        TMP.put(ticketNumber, rental);
         return rental;
     }
 
@@ -62,31 +70,26 @@ public class RentalServiceImpl implements RentalService {
     }
 
     public void returnItem(int ticketNumber) {
-        Rental rental = returnRental(ticketNumber);
+        Rental rental = rentalDao.getByTicket(ticketNumber);
+
+        rental.setReturnDate(new Date());
 
         for (RentalListener listener : listeners) {
             listener.itemReturned(rental);
         }
 
+        rental.setTicketNumber(null);
         returnTicket(ticketNumber);
     }
 
-    private Rental returnRental(int ticketNumber) {
-        // TODO: get
-        Rental rental = TMP.remove(ticketNumber);
-        rental.setRented(false);
-        rental.setReturnDate(new Date());
-
-        // TODO: update
-        return rental;
-    }
-
     public void updateItem(int ticketNumber, String... items) {
-        Rental before = returnRental(ticketNumber);
+        Rental before = rentalDao.getByTicket(ticketNumber);
+        before.setReturnDate(new Date());
         Rental after = createRental(ticketNumber, items);
 
         for (RentalListener listener : listeners) {
             listener.itemsChanged(before, after);
         }
+        before.setTicketNumber(null);
     }
 }

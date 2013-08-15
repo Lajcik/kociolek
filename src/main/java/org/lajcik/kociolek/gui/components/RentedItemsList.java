@@ -20,21 +20,18 @@ public class RentedItemsList extends JList implements RentalListener {
         setCellRenderer(new RentedItemsRenderer());
     }
 
-    @Override
     public void itemRented(Rental rental) {
         for (Item item : rental.getRentedItems()) {
             getMyModel().addItem(item.getName(), rental.getTicketNumber());
         }
     }
 
-    @Override
     public void itemReturned(Rental rental) {
         for (Item item : rental.getRentedItems()) {
             getMyModel().removeItem(item.getName(), rental.getTicketNumber());
         }
     }
 
-    @Override
     public void itemsChanged(Rental before, Rental after) {
         itemReturned(before);
         itemRented(after);
@@ -51,7 +48,6 @@ public class RentedItemsList extends JList implements RentalListener {
 
     private static class RentedItemsRenderer extends JLabel implements ListCellRenderer {
 
-        @Override
         public Component getListCellRendererComponent(JList list,
                                                       Object value,
                                                       int index,
@@ -81,7 +77,6 @@ public class RentedItemsList extends JList implements RentalListener {
             this.name = name;
         }
 
-        @Override
         public int compareTo(RentedItem o) {
             return this.name.compareTo(o.name);
         }
@@ -90,12 +85,10 @@ public class RentedItemsList extends JList implements RentalListener {
     private static class RentedItemsListModel extends AbstractListModel {
         private List<RentedItem> data = new ArrayList<RentedItem>();
 
-        @Override
         public int getSize() {
             return data.size();
         }
 
-        @Override
         public Object getElementAt(int index) {
             return data.get(index);
         }

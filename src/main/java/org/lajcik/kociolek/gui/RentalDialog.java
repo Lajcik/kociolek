@@ -180,6 +180,7 @@ public class RentalDialog extends JDialog implements ActionListener {
                 rentalService.returnTicket(ticketNumber);
             }
             setVisible(false);
+            dispose();
             return;
         }
         throw new WtfException("Unexpected source: " + e.getSource() + " of event " + e);

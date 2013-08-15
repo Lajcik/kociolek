@@ -5,4 +5,30 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:component-scan base-package="org.lajcik.kociolek.service"/>
+    <context:component-scan base-package="org.lajcik.kociolek.dao"/>
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="org.sqlite.JDBC"/>
+        <property name="url" value="jdbc:sqlite:kociolek.db"/>
+        <property name="username" value=""/>
+        <property name="password" value=""/>
+        <property name="initialSize" value="1"/>
+        <property name="maxActive" value="1"/>
+    </bean>
+
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="hibernateProperties">
+            <props>
+                <prop key="dialect">org.hibernate.dialect.SQLiteDialect</prop>
+                <prop key="connection.driver_class">org.sqlite.JDBC</prop>
+                <prop key="connection.url">jdbc:sqlite:kociolek.db</prop>
+                <prop key="hibernate.hbm2ddl.auto">create</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory" />
+    </bean>
 </beans>
