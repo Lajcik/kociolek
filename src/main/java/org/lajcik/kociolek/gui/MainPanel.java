@@ -16,10 +16,6 @@ public class MainPanel extends JPanel {
     private JPanel buttonPanel = new JPanel();
     private RentedItemsPanel rentedItemsPanel = new RentedItemsPanel();
 
-    //TODO: shouldn't be here
-    private TicketDispenser ticketDispenser = new TicketDispenser();
-    private int i = 0;
-
     public MainPanel() {
         setLayout(new BorderLayout());
 
@@ -27,7 +23,15 @@ public class MainPanel extends JPanel {
         rentButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new RentalDialog(null, ticketDispenser.getNextAvailableTicket());
+                new RentalDialog(null, null);
+            }
+        });
+
+        JButton closeButton = new JButton("Zamknij");
+        closeButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0); //TODO: proper exit
             }
         });
 
@@ -35,7 +39,7 @@ public class MainPanel extends JPanel {
         buttonPanel.add(rentButton);
         buttonPanel.add(Box.createHorizontalGlue());
         buttonPanel.add(new JButton("Raport"));
-        buttonPanel.add(new JButton("Zamknij"));
+        buttonPanel.add(closeButton);
         add(buttonPanel, BorderLayout.PAGE_START);
 
         add(rentedItemsPanel, BorderLayout.CENTER);

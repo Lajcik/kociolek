@@ -2,6 +2,7 @@ package org.lajcik.kociolek.service;
 
 import org.lajcik.kociolek.domain.Item;
 import org.lajcik.kociolek.domain.Rental;
+import org.lajcik.kociolek.util.TicketDispenser;
 
 import java.util.*;
 
@@ -10,6 +11,7 @@ import java.util.*;
  */
 public class RentalService {
     private static Map<Integer, Rental> TMP = new HashMap<Integer, Rental>();
+    private static TicketDispenser ticketDispenser = new TicketDispenser();
 
     private static List<RentalListener> listeners = new ArrayList<RentalListener>();
 
@@ -21,11 +23,15 @@ public class RentalService {
         listeners.remove(listener);
     }
 
+    public static int getNextTicketNumber() {
+        return ticketDispenser.getNextAvailableTicket();
+    }
+
     public static void rentItem(int ticketNumber, String... items) {
 
         Rental rental = createRental(ticketNumber, items);
 
-        for(RentalListener listener : listeners) {
+        for (RentalListener listener : listeners) {
             listener.itemRented(rental);
         }
     }
@@ -49,13 +55,18 @@ public class RentalService {
         return rental;
     }
 
+    public static void returnTicket(int ticketNumber) {
+        ticketDispenser.returnTicket(ticketNumber);
+    }
+
     public static void returnItem(int ticketNumber) {
         Rental rental = returnRental(ticketNumber);
 
-        for(RentalListener listener : listeners) {
+        for (RentalListener listener : listeners) {
             listener.itemReturned(rental);
         }
 
+        returnTicket(ticketNumber);
     }
 
     private static Rental returnRental(int ticketNumber) {
@@ -72,7 +83,7 @@ public class RentalService {
         Rental before = returnRental(ticketNumber);
         Rental after = createRental(ticketNumber, items);
 
-        for(RentalListener listener : listeners) {
+        for (RentalListener listener : listeners) {
             listener.itemsChanged(before, after);
         }
     }

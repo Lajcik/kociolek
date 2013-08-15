@@ -1,6 +1,8 @@
 package org.lajcik.kociolek.gui;
 
 import net.miginfocom.swing.MigLayout;
+import org.lajcik.kociolek.domain.Item;
+import org.lajcik.kociolek.domain.Rental;
 import org.lajcik.kociolek.service.RentalService;
 import org.lajcik.kociolek.util.WtfException;
 
@@ -25,19 +27,28 @@ public class RentalDialog extends JDialog implements ActionListener {
     private final Mode mode;
     private JButton addItemButton;
 
-    public RentalDialog(Frame frame, int ticketNumber, String... rentedItems) {
+    public RentalDialog(Frame frame, Rental rental) {
         super(frame, "", true);
-        mode = rentedItems.length > 0 ? Mode.EDIT : Mode.CREATE;
-        this.ticketNumber = ticketNumber;
+        mode = rental != null ? Mode.EDIT : Mode.CREATE;
+
+        if(mode == Mode.CREATE) {
+            this.ticketNumber = RentalService.getNextTicketNumber();
+        } else {
+            this.ticketNumber = rental.getTicketNumber();
+        }
+
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
         getContentPane().add(mainPanel);
 
         mainPanel.add(createTopPanel(ticketNumber), BorderLayout.PAGE_START);
-        mainPanel.add(createCenterPanel(rentedItems), BorderLayout.CENTER);
+        mainPanel.add(createCenterPanel(rental), BorderLayout.CENTER);
         mainPanel.add(createBottomPanel(), BorderLayout.PAGE_END);
 
+        if(mode == Mode.CREATE) {
+            addItem(null);
+        }
 
         pack();
 
@@ -75,7 +86,7 @@ public class RentalDialog extends JDialog implements ActionListener {
         return bottomPanel;
     }
 
-    private JPanel createCenterPanel(String... rentedItems) {
+    private JPanel createCenterPanel(Rental rental) {
         itemPanel = new JPanel();
         itemPanel.setLayout(new MigLayout("wrap 3, debug", "[7]7[fill]7[]"));
 
@@ -84,8 +95,10 @@ public class RentalDialog extends JDialog implements ActionListener {
         itemPanel.add(Box.createHorizontalGlue(), "south");
         itemPanel.add(addItemButton, "south");
 
-        for (String item : rentedItems) {
-            addItem(item);
+        if (mode == Mode.EDIT) {
+            for (Item item : rental.getRentedItems()) {
+                addItem(item.getName());
+            }
         }
 
         return itemPanel;
@@ -160,6 +173,9 @@ public class RentalDialog extends JDialog implements ActionListener {
         }
 
         if (e.getSource() == cancelButton) {
+            if(mode == Mode.CREATE) {
+                RentalService.returnTicket(ticketNumber);
+            }
             setVisible(false);
             return;
         }
