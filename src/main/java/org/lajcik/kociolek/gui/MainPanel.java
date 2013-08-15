@@ -1,8 +1,5 @@
 package org.lajcik.kociolek.gui;
 
-import org.lajcik.kociolek.service.RentalService;
-import org.lajcik.kociolek.util.TicketDispenser;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -21,7 +18,6 @@ public class MainPanel extends JPanel {
 
         JButton rentButton = new JButton("Wypożycz");
         rentButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 new RentalDialog(null, null);
             }
@@ -29,7 +25,6 @@ public class MainPanel extends JPanel {
 
         JButton closeButton = new JButton("Zamknij");
         closeButton.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 System.exit(0); //TODO: proper exit
             }

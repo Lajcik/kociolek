@@ -4,6 +4,7 @@ import org.lajcik.kociolek.gui.components.RentedItemsList;
 import org.lajcik.kociolek.gui.components.TicketPanel;
 import org.lajcik.kociolek.service.RentalService;
 import org.lajcik.kociolek.util.ScrollablePanel;
+import org.lajcik.kociolek.util.SpringHelper;
 import org.lajcik.kociolek.util.WrapLayout;
 
 import javax.swing.*;
@@ -15,6 +16,7 @@ import java.awt.*;
 public class RentedItemsPanel extends JPanel {
     private RentedItemsList itemList = new RentedItemsList();
     private TicketPanel ticketPanel = new TicketPanel();
+    private RentalService rentalService = SpringHelper.getBean(RentalService.class);
 
     public RentedItemsPanel() {
         setLayout(new GridBagLayout());
@@ -63,7 +65,7 @@ public class RentedItemsPanel extends JPanel {
         c.anchor = GridBagConstraints.FIRST_LINE_END;
         add(itemsPanelHolder, c);
 
-        RentalService.addListener(ticketPanel);
-        RentalService.addListener(itemList);
+        rentalService.addListener(ticketPanel);
+        rentalService.addListener(itemList);
     }
 }

@@ -1,10 +1,9 @@
 package org.lajcik.kociolek.gui.components;
 
-import net.miginfocom.swing.MigLayout;
 import org.lajcik.kociolek.domain.Rental;
+import org.lajcik.kociolek.gui.RentalDialog;
 import org.lajcik.kociolek.service.RentalListener;
 import org.lajcik.kociolek.util.ScrollablePanel;
-import org.lajcik.kociolek.util.WrapLayout;
 import org.lajcik.kociolek.util.WtfException;
 
 import javax.swing.*;
@@ -50,7 +49,7 @@ public class TicketPanel extends ScrollablePanel implements RentalListener {
 
     private class TicketButton extends JButton {
 
-        private TicketButton(Rental rental) {
+        private TicketButton(final Rental rental) {
             setText(Integer.toString(rental.getTicketNumber()));
             setFont(getFont().deriveFont(Font.BOLD, 20.0f));
             setHorizontalAlignment(CENTER);
@@ -60,7 +59,7 @@ public class TicketPanel extends ScrollablePanel implements RentalListener {
             addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    // TODO
+                    new RentalDialog(null, rental);
                 }
             });
         }

@@ -4,14 +4,15 @@ import net.miginfocom.swing.MigLayout;
 import org.lajcik.kociolek.domain.Item;
 import org.lajcik.kociolek.domain.Rental;
 import org.lajcik.kociolek.service.RentalService;
+import org.lajcik.kociolek.util.SpringHelper;
 import org.lajcik.kociolek.util.WtfException;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author lajcik
@@ -27,12 +28,15 @@ public class RentalDialog extends JDialog implements ActionListener {
     private final Mode mode;
     private JButton addItemButton;
 
+    private RentalService rentalService;
+
     public RentalDialog(Frame frame, Rental rental) {
         super(frame, "", true);
         mode = rental != null ? Mode.EDIT : Mode.CREATE;
 
+        rentalService = SpringHelper.getBean(RentalService.class);
         if(mode == Mode.CREATE) {
-            this.ticketNumber = RentalService.getNextTicketNumber();
+            this.ticketNumber = rentalService.getNextTicketNumber();
         } else {
             this.ticketNumber = rental.getTicketNumber();
         }
@@ -48,6 +52,7 @@ public class RentalDialog extends JDialog implements ActionListener {
 
         if(mode == Mode.CREATE) {
             addItem(null);
+            refresh();
         }
 
         pack();
@@ -120,7 +125,6 @@ public class RentalDialog extends JDialog implements ActionListener {
         itemPanel.add(itemName);
         itemPanel.add(removeThis);
         removeThis.addActionListener(new ActionListener() {
-            @Override
             public void actionPerformed(ActionEvent e) {
                 itemPanel.remove(lpLabel);
                 itemPanel.remove(itemName);
@@ -143,7 +147,6 @@ public class RentalDialog extends JDialog implements ActionListener {
         pack();
     }
 
-    @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == saveButton) {
             List<String> items = new ArrayList<String>();
@@ -156,7 +159,7 @@ public class RentalDialog extends JDialog implements ActionListener {
                     }
                 }
             }
-            RentalService.rentItem(ticketNumber, items.toArray(new String[items.size()]));
+            rentalService.rentItem(ticketNumber, items.toArray(new String[items.size()]));
             setVisible(false);
             return;
         }
@@ -174,7 +177,7 @@ public class RentalDialog extends JDialog implements ActionListener {
 
         if (e.getSource() == cancelButton) {
             if(mode == Mode.CREATE) {
-                RentalService.returnTicket(ticketNumber);
+                rentalService.returnTicket(ticketNumber);
             }
             setVisible(false);
             return;
