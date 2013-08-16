@@ -30,10 +30,12 @@ public class MainPanel extends JPanel {
             }
         });
 
+        JButton raportButton = new JButton("Raport");
+
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.add(rentButton);
         buttonPanel.add(Box.createHorizontalGlue());
-        buttonPanel.add(new JButton("Raport"));
+        buttonPanel.add(raportButton);
         buttonPanel.add(closeButton);
         add(buttonPanel, BorderLayout.PAGE_START);
 

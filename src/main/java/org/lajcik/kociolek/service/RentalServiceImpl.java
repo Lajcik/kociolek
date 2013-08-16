@@ -15,7 +15,6 @@ import java.util.*;
  * @author lajcik
  */
 @Component
-@Transactional()
 public class RentalServiceImpl implements RentalService {
 
     @Autowired
@@ -39,6 +38,7 @@ public class RentalServiceImpl implements RentalService {
         return ticketDispenser.getNextAvailableTicket();
     }
 
+    @Transactional
     public void rentItem(int ticketNumber, String... items) {
 
         Rental rental = createRental(ticketNumber, items);
@@ -69,6 +69,7 @@ public class RentalServiceImpl implements RentalService {
         ticketDispenser.returnTicket(ticketNumber);
     }
 
+    @Transactional
     public void returnItem(int ticketNumber) {
         Rental rental = rentalDao.getByTicket(ticketNumber);
 

@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * @author lajcik
@@ -93,7 +94,8 @@ public class RentalDialog extends JDialog implements ActionListener {
 
     private JPanel createCenterPanel(Rental rental) {
         itemPanel = new JPanel();
-        itemPanel.setLayout(new MigLayout("wrap 3, debug", "[7]7[fill]7[]"));
+        itemPanel.setLayout(new MigLayout("wrap 3", "[7]7[fill]7[]"));
+//        itemPanel.setLayout(new MigLayout("wrap 3, debug", "[7]7[fill]7[]"));
 
         addItemButton = new JButton("+");
         addItemButton.addActionListener(this);
