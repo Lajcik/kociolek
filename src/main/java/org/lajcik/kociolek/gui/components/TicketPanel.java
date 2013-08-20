@@ -67,7 +67,7 @@ public class TicketPanel extends ScrollablePanel implements RentalListener {
 
     @Override
     public void itemsChanged(Rental before, Rental after) {
-        // noop
+        // no update needed, the button remains as it was in this situation
     }
 
     private class TicketButton extends JButton {
@@ -85,12 +85,12 @@ public class TicketPanel extends ScrollablePanel implements RentalListener {
             addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    new RentalDialog(null, rental);
+                    new RentalDialog(ticketNumber);
                 }
             });
         }
 
-        private int getTicketNumber() {
+        public int getTicketNumber() {
             return ticketNumber;
         }
     }

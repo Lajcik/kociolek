@@ -21,7 +21,7 @@ public class MainPanel extends JPanel {
         JButton rentButton = new JButton("Wypożycz");
         rentButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new RentalDialog(null, null);
+                new RentalDialog();
             }
         });
 

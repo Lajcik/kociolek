@@ -73,13 +73,14 @@ public class RentalServiceImpl implements RentalService {
         return ticketDispenser.getNextAvailableTicket();
     }
 
-    public void rentItem(int ticketNumber, String... items) {
+    public Rental rentItem(int ticketNumber, String... items) {
 
         Rental rental = createRental(ticketNumber, items);
 
         for (RentalListener listener : listeners) {
             listener.itemRented(rental);
         }
+        return rental;
     }
 
     private Rental createRental(int ticketNumber, String[] items) {
@@ -121,6 +122,7 @@ public class RentalServiceImpl implements RentalService {
         returnTicket(ticketNumber);
     }
 
+    @Override
     public void updateItem(int ticketNumber, String... items) {
         Rental before = rentalDao.getByTicket(ticketNumber);
         before.setReturnDate(new Date());
@@ -134,5 +136,10 @@ public class RentalServiceImpl implements RentalService {
 
     public List<Rental> getActiveRentals() {
         return rentalDao.getAllActiveRentals();
+    }
+
+    @Override
+    public Rental getRental(Integer ticketNumber) {
+        return rentalDao.getByTicket(ticketNumber);
     }
 }

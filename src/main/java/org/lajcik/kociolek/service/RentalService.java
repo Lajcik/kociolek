@@ -14,11 +14,15 @@ public interface RentalService {
 
     int getNextTicketNumber();
 
-    void rentItem(int ticketNumber, String... items);
+    Rental rentItem(int ticketNumber, String... items);
 
     void returnTicket(int ticketNumber);
 
     void returnItem(int ticketNumber);
 
     List<Rental> getActiveRentals();
+
+    Rental getRental(Integer ticketNumber);
+
+    void updateItem(int ticketNumber, String... items);
 }

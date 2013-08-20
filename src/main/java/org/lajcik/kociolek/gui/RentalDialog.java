@@ -30,15 +30,25 @@ public class RentalDialog extends JDialog implements ActionListener {
 
     private RentalService rentalService;
 
-    public RentalDialog(Frame frame, Rental rental) {
-        super(frame, "", true);
-        mode = rental != null ? Mode.EDIT : Mode.CREATE;
+    public RentalDialog() {
+        mode = Mode.CREATE;
+        init(null);
+    }
 
+    public RentalDialog(int ticketNumber) {
+        super((JFrame)null, "", true);
+        mode = Mode.EDIT;
+        init(ticketNumber);
+    }
+
+    private void init(Integer ticketNumber) {
         rentalService = SpringHelper.getBean(RentalService.class);
+        Rental rental = null;
         if (mode == Mode.CREATE) {
             this.ticketNumber = rentalService.getNextTicketNumber();
         } else {
-            this.ticketNumber = rental.getTicketNumber();
+            this.ticketNumber = ticketNumber;
+            rental = rentalService.getRental(ticketNumber);
         }
 
 
@@ -46,7 +56,7 @@ public class RentalDialog extends JDialog implements ActionListener {
         mainPanel.setLayout(new BorderLayout());
         getContentPane().add(mainPanel);
 
-        mainPanel.add(createTopPanel(ticketNumber), BorderLayout.PAGE_START);
+        mainPanel.add(createTopPanel(), BorderLayout.PAGE_START);
         mainPanel.add(createCenterPanel(rental), BorderLayout.CENTER);
         mainPanel.add(createBottomPanel(), BorderLayout.PAGE_END);
 
@@ -61,12 +71,12 @@ public class RentalDialog extends JDialog implements ActionListener {
 
         pack();
 
-        setLocationRelativeTo(frame);
+        setLocationRelativeTo(null);
         setVisible(true);
         setResizable(false);
     }
 
-    private JPanel createTopPanel(int ticketNumber) {
+    private JPanel createTopPanel() {
         JPanel topPanel = new JPanel();
         topPanel.add(new JLabel("Numerek "));
         JLabel numberLabel = new JLabel("#" + Integer.toString(ticketNumber));
@@ -150,16 +160,7 @@ public class RentalDialog extends JDialog implements ActionListener {
         Action action = getAction(e);
         switch (action) {
             case RENT:
-                List<String> items = new ArrayList<String>();
-                for (Component component : itemPanel.getComponents()) {
-                    if ("ITEM".equals(component.getName())) {
-                        JTextField textField = (JTextField) component;
-                        String item = textField.getText().trim();
-                        if (!item.equals("")) {
-                            items.add(item);
-                        }
-                    }
-                }
+                List<String> items = getItems();
                 rentalService.rentItem(ticketNumber, items.toArray(new String[items.size()]));
                 setVisible(false);
                 dispose();
@@ -172,8 +173,10 @@ public class RentalDialog extends JDialog implements ActionListener {
                 break;
 
             case UPDATE:
-//                setVisible(false);
-//                dispose();
+                List<String> newItems = getItems();
+                rentalService.updateItem(ticketNumber, newItems.toArray(new String[newItems.size()]));
+                setVisible(false);
+                dispose();
                 break;
 
             case CANCEL:
@@ -189,6 +192,20 @@ public class RentalDialog extends JDialog implements ActionListener {
                 refresh();
                 break;
         }
+    }
+
+    private List<String> getItems() {
+        List<String> items = new ArrayList<String>();
+        for (Component component : itemPanel.getComponents()) {
+            if ("ITEM".equals(component.getName())) {
+                JTextField textField = (JTextField) component;
+                String item = textField.getText().trim();
+                if (!item.equals("")) {
+                    items.add(item);
+                }
+            }
+        }
+        return items;
     }
 
     private Action getAction(ActionEvent e) {
