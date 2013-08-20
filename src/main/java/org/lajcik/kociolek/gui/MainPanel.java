@@ -1,5 +1,7 @@
 package org.lajcik.kociolek.gui;
 
+import org.springframework.context.annotation.Scope;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;

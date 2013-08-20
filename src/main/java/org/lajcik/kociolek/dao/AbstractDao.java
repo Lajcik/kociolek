@@ -1,13 +1,22 @@
 package org.lajcik.kociolek.dao;
 
-import org.springframework.orm.hibernate3.support.HibernateDaoSupport;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * User: sienkom
  */
-public class AbstractDao<T> extends HibernateDaoSupport {
+public class AbstractDao<T> {
 
     private Class<T> clazz;
+
+    @Autowired
+    private SessionFactory sessionFactory;
+
+    public Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
 
     public AbstractDao(Class<T> clazz) {
         this.clazz = clazz;

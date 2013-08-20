@@ -13,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * @author lajcik
@@ -36,7 +35,7 @@ public class RentalDialog extends JDialog implements ActionListener {
         mode = rental != null ? Mode.EDIT : Mode.CREATE;
 
         rentalService = SpringHelper.getBean(RentalService.class);
-        if(mode == Mode.CREATE) {
+        if (mode == Mode.CREATE) {
             this.ticketNumber = rentalService.getNextTicketNumber();
         } else {
             this.ticketNumber = rental.getTicketNumber();
@@ -51,10 +50,14 @@ public class RentalDialog extends JDialog implements ActionListener {
         mainPanel.add(createCenterPanel(rental), BorderLayout.CENTER);
         mainPanel.add(createBottomPanel(), BorderLayout.PAGE_END);
 
-        if(mode == Mode.CREATE) {
+        if (mode == Mode.CREATE) {
             addItem(null);
-            refresh();
+        } else {
+            for (Item item : rental.getRentedItems()) {
+                addItem(item.getName());
+            }
         }
+        refresh();
 
         pack();
 
@@ -101,12 +104,6 @@ public class RentalDialog extends JDialog implements ActionListener {
         addItemButton.addActionListener(this);
         itemPanel.add(Box.createHorizontalGlue(), "south");
         itemPanel.add(addItemButton, "south");
-
-        if (mode == Mode.EDIT) {
-            for (Item item : rental.getRentedItems()) {
-                addItem(item.getName());
-            }
-        }
 
         return itemPanel;
     }
@@ -178,7 +175,7 @@ public class RentalDialog extends JDialog implements ActionListener {
         }
 
         if (e.getSource() == cancelButton) {
-            if(mode == Mode.CREATE) {
+            if (mode == Mode.CREATE) {
                 rentalService.returnTicket(ticketNumber);
             }
             setVisible(false);

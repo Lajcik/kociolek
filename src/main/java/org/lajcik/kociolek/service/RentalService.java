@@ -2,6 +2,8 @@ package org.lajcik.kociolek.service;
 
 import org.lajcik.kociolek.domain.Rental;
 
+import java.util.List;
+
 /**
  * User: sienkom
  */
@@ -17,4 +19,6 @@ public interface RentalService {
     void returnTicket(int ticketNumber);
 
     void returnItem(int ticketNumber);
+
+    List<Rental> getActiveRentals();
 }

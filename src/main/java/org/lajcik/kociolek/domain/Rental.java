@@ -1,5 +1,7 @@
 package org.lajcik.kociolek.domain;
 
+import org.hibernate.annotations.Index;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,6 +21,8 @@ public class Rental {
     private List<Item> rentedItems = new ArrayList<Item>();
 
     @Id
+    @Column(name = "ID", nullable = false)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
         return id;
     }
@@ -27,6 +31,7 @@ public class Rental {
         this.id = id;
     }
 
+    @Index(name = "TICKET_NUMBER_IDX")
     @Column(name = "TICKET_NUMBER", nullable = true)
     public Integer getTicketNumber() {
         return ticketNumber;
@@ -54,7 +59,7 @@ public class Rental {
         this.returnDate = returnDate;
     }
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "RENTED_ITEM",
             joinColumns = {
                     @JoinColumn(name = "RENTAL_ID", nullable = false, updatable = false)},

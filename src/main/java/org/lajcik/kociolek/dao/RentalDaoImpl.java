@@ -17,11 +17,19 @@ public class RentalDaoImpl extends AbstractDao<Rental> implements RentalDao {
     }
 
     public Rental getByTicket(int ticketNumber) {
-        Query query = getSession().createQuery("from Rental r where r.ticketNumber = :ticketNumber and r.rented = true");
+        Query query = getSession().createQuery("from Rental r where r.ticketNumber = :ticketNumber");
 
         @SuppressWarnings("unchecked")
         List<Rental> results = query.list();
 
         return DataAccessUtils.uniqueResult(results);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<Rental> getAllActiveRentals() {
+        Query query = getSession().createQuery("from Rental r where r.ticketNumber is not null");
+
+        return query.list();
     }
 }

@@ -7,38 +7,72 @@ import org.lajcik.kociolek.domain.Rental;
 import org.lajcik.kociolek.util.TicketDispenser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallbackWithoutResult;
+import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.*;
+import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 /**
  * @author lajcik
  */
 @Component
+@Transactional
 public class RentalServiceImpl implements RentalService {
 
     @Autowired
     private RentalDao rentalDao;
     @Autowired
     private ItemDao itemDao;
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
-    private TicketDispenser ticketDispenser = new TicketDispenser();
+    private TicketDispenser ticketDispenser;
 
     private List<RentalListener> listeners = new ArrayList<RentalListener>();
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     public void addListener(RentalListener listener) {
         listeners.add(listener);
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     public void removeListener(RentalListener listener) {
         listeners.remove(listener);
     }
 
+    @PostConstruct
+    public void init() {
+        TransactionTemplate transactionTemplate = new TransactionTemplate();
+        transactionTemplate.setTransactionManager(transactionManager);
+        transactionTemplate.execute(new TransactionCallbackWithoutResult() {
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                List<Rental> activeRentals = getActiveRentals();
+                if (activeRentals.size() > 0) {
+                    List<Integer> activeTickets = new ArrayList<Integer>();
+                    for (Rental rental : activeRentals) {
+                        activeTickets.add(rental.getTicketNumber());
+                    }
+                    ticketDispenser = new TicketDispenser(activeTickets);
+                } else {
+                    ticketDispenser = new TicketDispenser();
+                }
+            }
+        });
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
     public int getNextTicketNumber() {
         return ticketDispenser.getNextAvailableTicket();
     }
 
-    @Transactional
     public void rentItem(int ticketNumber, String... items) {
 
         Rental rental = createRental(ticketNumber, items);
@@ -65,11 +99,11 @@ public class RentalServiceImpl implements RentalService {
         return rental;
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     public void returnTicket(int ticketNumber) {
         ticketDispenser.returnTicket(ticketNumber);
     }
 
-    @Transactional
     public void returnItem(int ticketNumber) {
         Rental rental = rentalDao.getByTicket(ticketNumber);
 
@@ -92,5 +126,9 @@ public class RentalServiceImpl implements RentalService {
             listener.itemsChanged(before, after);
         }
         before.setTicketNumber(null);
+    }
+
+    public List<Rental> getActiveRentals() {
+        return rentalDao.getAllActiveRentals();
     }
 }

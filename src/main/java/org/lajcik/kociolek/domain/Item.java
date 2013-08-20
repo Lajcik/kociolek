@@ -1,20 +1,19 @@
 package org.lajcik.kociolek.domain;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * @author lajcik
  */
 @Entity
-@Table(name = "Item")
+@Table(name = "ITEM")
 public class Item {
     private long id;
     private String name;
 
     @Id
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public long getId() {
         return id;
     }
@@ -23,7 +22,7 @@ public class Item {
         this.id = id;
     }
 
-    @Column(name = "name", nullable = false, length = 200)
+    @Column(name = "NAME", nullable = false, length = 200)
     public String getName() {
         return name;
     }

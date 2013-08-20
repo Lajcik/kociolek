@@ -2,8 +2,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd"
-        default-autowire="byType">
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd"
+       default-autowire="byType">
+
+    <tx:annotation-driven/>
 
     <context:component-scan base-package="org.lajcik.kociolek.service"/>
     <context:component-scan base-package="org.lajcik.kociolek.dao"/>
@@ -24,7 +30,7 @@
                 <prop key="hibernate.dialect">org.lajcik.kociolek.util.SQLiteDialect</prop>
                 <prop key="connection.driver_class">org.sqlite.JDBC</prop>
                 <prop key="connection.url">jdbc:sqlite:kociolek.db</prop>
-                <prop key="hibernate.hbm2ddl.auto">create</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
             </props>
         </property>
         <property name="annotatedClasses">

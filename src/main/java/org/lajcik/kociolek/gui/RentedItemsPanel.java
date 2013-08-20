@@ -1,5 +1,6 @@
 package org.lajcik.kociolek.gui;
 
+import org.lajcik.kociolek.domain.Rental;
 import org.lajcik.kociolek.gui.components.RentedItemsList;
 import org.lajcik.kociolek.gui.components.TicketPanel;
 import org.lajcik.kociolek.service.RentalService;
@@ -9,6 +10,8 @@ import org.lajcik.kociolek.util.WrapLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.*;
+import java.util.List;
 
 /**
  * @author lajcik
@@ -65,7 +68,17 @@ public class RentedItemsPanel extends JPanel {
         c.anchor = GridBagConstraints.FIRST_LINE_END;
         add(itemsPanelHolder, c);
 
+        initData();
+
         rentalService.addListener(ticketPanel);
         rentalService.addListener(itemList);
+    }
+
+    private void initData() {
+        List<Rental> activeRentals = rentalService.getActiveRentals();
+        for(Rental rental : activeRentals) {
+            ticketPanel.itemRented(rental);
+            itemList.itemRented(rental);
+        }
     }
 }

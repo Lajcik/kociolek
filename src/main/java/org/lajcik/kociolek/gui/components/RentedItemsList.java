@@ -24,12 +24,14 @@ public class RentedItemsList extends JList implements RentalListener {
         for (Item item : rental.getRentedItems()) {
             getMyModel().addItem(item.getName(), rental.getTicketNumber());
         }
+        invalidate();
     }
 
     public void itemReturned(Rental rental) {
         for (Item item : rental.getRentedItems()) {
             getMyModel().removeItem(item.getName(), rental.getTicketNumber());
         }
+        invalidate();
     }
 
     public void itemsChanged(Rental before, Rental after) {

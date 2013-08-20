@@ -9,10 +9,22 @@ public class TicketDispenser {
     private Set<Integer> usedNumbers = new HashSet<Integer>();
     private Set<Integer> unusedNumbers = new TreeSet<Integer>();
 
+    public TicketDispenser() {
+    }
+
+    public TicketDispenser(List<Integer> usedNumbers) {
+        for(int i : usedNumbers) {
+            this.usedNumbers.add(i);
+        }
+    }
+
     public int getNextAvailableTicket() {
         int ticket;
         if (unusedNumbers.size() == 0) {
-            ticket = usedNumbers.size() + 1;
+            ticket = 1;
+            while(usedNumbers.contains(ticket)) {
+                ticket++;
+            }
         } else {
             Iterator<Integer> iterator = unusedNumbers.iterator();
             ticket = iterator.next();
