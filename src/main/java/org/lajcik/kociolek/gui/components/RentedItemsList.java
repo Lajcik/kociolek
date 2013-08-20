@@ -82,6 +82,23 @@ public class RentedItemsList extends JList implements RentalListener {
         public int compareTo(RentedItem o) {
             return this.name.compareTo(o.name);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            RentedItem that = (RentedItem) o;
+
+            if (!name.equals(that.name)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return name.hashCode();
+        }
     }
 
     private static class RentedItemsListModel extends AbstractListModel {
