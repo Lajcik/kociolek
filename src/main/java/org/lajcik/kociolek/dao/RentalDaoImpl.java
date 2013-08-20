@@ -18,6 +18,7 @@ public class RentalDaoImpl extends AbstractDao<Rental> implements RentalDao {
 
     public Rental getByTicket(int ticketNumber) {
         Query query = getSession().createQuery("from Rental r where r.ticketNumber = :ticketNumber");
+        query.setParameter("ticketNumber", ticketNumber);
 
         @SuppressWarnings("unchecked")
         List<Rental> results = query.list();

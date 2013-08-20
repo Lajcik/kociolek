@@ -88,9 +88,13 @@ public class RentalServiceImpl implements RentalService {
         rental.setTicketNumber(ticketNumber);
 
         for (String itemName : items) {
-            // TODO: find or create item
-            Item item = new Item();
-            item.setName(itemName);
+
+            Item item = itemDao.findItem(itemName);
+            if (item == null) {
+                item = new Item();
+                item.setName(itemName);
+                itemDao.save(item);
+            }
             rental.getRentedItems().add(item);
         }
 

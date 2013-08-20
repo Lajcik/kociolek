@@ -147,45 +147,73 @@ public class RentalDialog extends JDialog implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == saveButton) {
-            List<String> items = new ArrayList<String>();
-            for (Component component : itemPanel.getComponents()) {
-                if ("ITEM".equals(component.getName())) {
-                    JTextField textField = (JTextField) component;
-                    String item = textField.getText().trim();
-                    if (!item.equals("")) {
-                        items.add(item);
+        Action action = getAction(e);
+        switch (action) {
+            case RENT:
+                List<String> items = new ArrayList<String>();
+                for (Component component : itemPanel.getComponents()) {
+                    if ("ITEM".equals(component.getName())) {
+                        JTextField textField = (JTextField) component;
+                        String item = textField.getText().trim();
+                        if (!item.equals("")) {
+                            items.add(item);
+                        }
                     }
                 }
-            }
-            rentalService.rentItem(ticketNumber, items.toArray(new String[items.size()]));
-            setVisible(false);
-            return;
-        }
+                rentalService.rentItem(ticketNumber, items.toArray(new String[items.size()]));
+                setVisible(false);
+                dispose();
+                break;
 
+            case RETURN:
+                rentalService.returnItem(ticketNumber);
+                setVisible(false);
+                dispose();
+                break;
+
+            case UPDATE:
+//                setVisible(false);
+//                dispose();
+                break;
+
+            case CANCEL:
+                if (mode == Mode.CREATE) {
+                    rentalService.returnTicket(ticketNumber);
+                }
+                setVisible(false);
+                dispose();
+                break;
+
+            case ADD_ITEM:
+                addItem(null);
+                refresh();
+                break;
+        }
+    }
+
+    private Action getAction(ActionEvent e) {
+        if (e.getSource() == saveButton) {
+            return mode == Mode.CREATE ? Action.RENT : Action.RETURN;
+        }
         if (e.getSource() == addItemButton) {
-            addItem(null);
-            refresh();
-            return;
+            return Action.ADD_ITEM;
         }
 
         if (mode == Mode.EDIT && e.getSource() == updateButton) {
-
-            return;
+            return Action.UPDATE;
         }
 
         if (e.getSource() == cancelButton) {
-            if (mode == Mode.CREATE) {
-                rentalService.returnTicket(ticketNumber);
-            }
-            setVisible(false);
-            dispose();
-            return;
+            return Action.CANCEL;
         }
         throw new WtfException("Unexpected source: " + e.getSource() + " of event " + e);
     }
 
     enum Mode {
         CREATE, EDIT
+    }
+
+    enum Action {
+        RENT, RETURN, UPDATE, CANCEL, ADD_ITEM
     }
 }

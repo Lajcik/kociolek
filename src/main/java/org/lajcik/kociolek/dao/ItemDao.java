@@ -7,4 +7,5 @@ import org.lajcik.kociolek.domain.Item;
  */
 public interface ItemDao extends Dao<Item> {
 
+    Item findItem(String itemName);
 }
