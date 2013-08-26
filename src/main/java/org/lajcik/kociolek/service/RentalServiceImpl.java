@@ -1,5 +1,6 @@
 package org.lajcik.kociolek.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.lajcik.kociolek.dao.ItemDao;
 import org.lajcik.kociolek.dao.RentalDao;
 import org.lajcik.kociolek.domain.Item;
@@ -90,11 +91,11 @@ public class RentalServiceImpl implements RentalService {
         rental.setTicketNumber(ticketNumber);
 
         for (String itemName : items) {
-
+            itemName = itemName.trim();
             Item item = itemDao.findItem(itemName);
             if (item == null) {
                 item = new Item();
-                item.setName(itemName);
+                item.setName(StringUtils.capitalize(itemName));
                 itemDao.save(item);
             }
             rental.getRentedItems().add(item);

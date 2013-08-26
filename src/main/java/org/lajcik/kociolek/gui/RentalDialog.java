@@ -35,6 +35,7 @@ public class RentalDialog extends JDialog implements ActionListener {
     private List<String> itemDictionary = null;
 
     public RentalDialog() {
+        super((JFrame)null, "", true);
         mode = Mode.CREATE;
         init(null);
     }

@@ -33,6 +33,11 @@ public class MainPanel extends JPanel {
         });
 
         JButton raportButton = new JButton("Raport");
+        raportButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new ReportDialog();
+            }
+        });
 
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.add(rentButton);
