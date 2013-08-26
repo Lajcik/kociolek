@@ -18,6 +18,7 @@ public class Rental {
     private Integer ticketNumber;
     private Date rentDate;
     private Date returnDate;
+    private Integer minutesRented;
     private List<Item> rentedItems = new ArrayList<Item>();
 
     @Id
@@ -57,6 +58,15 @@ public class Rental {
 
     public void setReturnDate(Date returnDate) {
         this.returnDate = returnDate;
+    }
+
+    @Column(name = "MINUTES_RENTED", nullable = true)
+    public Integer getMinutesRented() {
+        return minutesRented;
+    }
+
+    public void setMinutesRented(Integer minutesRented) {
+        this.minutesRented = minutesRented;
     }
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

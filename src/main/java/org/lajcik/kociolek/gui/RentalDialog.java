@@ -3,7 +3,9 @@ package org.lajcik.kociolek.gui;
 import net.miginfocom.swing.MigLayout;
 import org.lajcik.kociolek.domain.Item;
 import org.lajcik.kociolek.domain.Rental;
+import org.lajcik.kociolek.service.NameService;
 import org.lajcik.kociolek.service.RentalService;
+import org.lajcik.kociolek.util.AutoCompleteComboBox;
 import org.lajcik.kociolek.util.SpringHelper;
 import org.lajcik.kociolek.util.WtfException;
 
@@ -29,6 +31,8 @@ public class RentalDialog extends JDialog implements ActionListener {
     private JButton addItemButton;
 
     private RentalService rentalService;
+    private NameService nameService;
+    private List<String> itemDictionary = null;
 
     public RentalDialog() {
         mode = Mode.CREATE;
@@ -41,8 +45,16 @@ public class RentalDialog extends JDialog implements ActionListener {
         init(ticketNumber);
     }
 
+    private synchronized List<String> getItemDictionary() {
+        if(itemDictionary == null) {
+            itemDictionary = nameService.getItemDictionary();
+        }
+        return itemDictionary;
+    }
+
     private void init(Integer ticketNumber) {
         rentalService = SpringHelper.getBean(RentalService.class);
+        nameService = SpringHelper.getBean(NameService.class);
         Rental rental = null;
         if (mode == Mode.CREATE) {
             this.ticketNumber = rentalService.getNextTicketNumber();
@@ -118,17 +130,34 @@ public class RentalDialog extends JDialog implements ActionListener {
         return itemPanel;
     }
 
+    private String getItemName(Component component) {
+        if(component instanceof JTextField) {
+            return ((JTextField) component).getText();
+        }
+        if(component instanceof AutoCompleteComboBox) {
+            AutoCompleteComboBox combo = (AutoCompleteComboBox) component;
+            Object selectedItem = combo.getSelectedItem();
+            return selectedItem.toString();
+        }
+        throw new IllegalStateException("Unexpected component instance: " + component);
+    }
+
     private void addItem(String item) {
         final JLabel lpLabel = new JLabel("x.");
         lpLabel.setName("LP");
 
-        final JTextField itemName = new JTextField();
+        final Component itemName;
+        if(item == null) {
+            itemName = new AutoCompleteComboBox(getItemDictionary());
+        } else {
+            JTextField jTextField = new JTextField();
+            jTextField.setText(item);
+            jTextField.setEditable(false);
+            itemName = jTextField;
+        }
         itemName.setName("ITEM");
         itemName.setPreferredSize(new Dimension(200, itemName.getHeight()));
-        if (item != null) {
-            itemName.setText(item);
-            itemName.setEditable(false);
-        }
+
         final JButton removeThis = new JButton("-");
         itemPanel.add(lpLabel);
         itemPanel.add(itemName);
@@ -198,8 +227,7 @@ public class RentalDialog extends JDialog implements ActionListener {
         List<String> items = new ArrayList<String>();
         for (Component component : itemPanel.getComponents()) {
             if ("ITEM".equals(component.getName())) {
-                JTextField textField = (JTextField) component;
-                String item = textField.getText().trim();
+                String item = getItemName(component);
                 if (!item.equals("")) {
                     items.add(item);
                 }

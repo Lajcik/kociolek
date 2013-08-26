@@ -20,17 +20,25 @@ import java.util.logging.Logger;
  *
  * @author Exterminator13
  */
-public class AutoCompleteCombo extends JComboBox {
+public class AutoCompleteComboBox extends JComboBox {
 
-    private static final Logger logger = Logger.getLogger(AutoCompleteCombo.class.getName());
-    private Model model = new Model();
+    private static final Logger logger = Logger.getLogger(AutoCompleteComboBox.class.getName());
+    private Model model;
     private final JTextComponent textComponent = (JTextComponent) getEditor().getEditorComponent();
     private boolean modelFilling = false;
 
     private boolean updatePopup;
 
-    public AutoCompleteCombo() {
+    public AutoCompleteComboBox() {
+        this(null);
+    }
 
+    public AutoCompleteComboBox(List<String> initialData) {
+        if(initialData == null) {
+            this.model = new Model();
+        } else {
+            this.model = new Model(initialData);
+        }
         setEditable(true);
 
         logger.fine("setPattern() called from constructor");
@@ -258,7 +266,7 @@ public class AutoCompleteCombo extends JComboBox {
             void setPattern(String pattern) {
                 if (pattern == null || pattern.isEmpty()) {
                     filtered = list;
-                    AutoCompleteCombo.this.setSelectedItem(model.getElementAt(0));
+                    AutoCompleteComboBox.this.setSelectedItem(model.getElementAt(0));
                     logger.fine(String.format("[setPattern] combo.setSelectedItem(null)"));
                 } else {
                     filtered = new ArrayList<String>(limit);
@@ -269,15 +277,16 @@ public class AutoCompleteCombo extends JComboBox {
                             filtered.add(list.get(i));
                         }
                     }
-                    AutoCompleteCombo.this.setSelectedItem(pattern);
+                    AutoCompleteComboBox.this.setSelectedItem(pattern);
                     logger.fine(String.format("[setPattern] combo.setSelectedItem(%s)", pattern));
                 }
                 logger.fine(String.format("pattern:'%s', filtered: %s", pattern, filtered));
             }
 
             boolean contains(String s) {
-                if (s == null || s.trim().isEmpty())
+                if (s == null || s.trim().isEmpty()) {
                     return true;
+                }
                 s = s.toLowerCase();
                 for (String item : lowercase) {
                     if (item.equals(s)) {
@@ -290,82 +299,13 @@ public class AutoCompleteCombo extends JComboBox {
 
         Data data = new Data();
 
-        void readData() {
-            String[] countries = {
-                    "Afghanistan",
-                    "Albania",
-                    "Algeria",
-                    "Andorra",
-                    "Angola",
-                    "Argentina",
-                    "Armenia",
-                    "Austria",
-                    "Azerbaijan",
-                    "Bahamas",
-                    "Bahrain",
-                    "Bangladesh",
-                    "Barbados",
-                    "Belarus",
-                    "Belgium",
-                    "Benin",
-                    "Bhutan",
-                    "Bolivia",
-                    "Bosnia & Herzegovina",
-                    "Botswana",
-                    "Brazil",
-                    "Bulgaria",
-                    "Burkina Faso",
-                    "Burma",
-                    "Burundi",
-                    "Cambodia",
-                    "Cameroon",
-                    "Canada",
-                    "China",
-                    "Colombia",
-                    "Comoros",
-                    "Congo",
-                    "Croatia",
-                    "Cuba",
-                    "Cyprus",
-                    "Czech Republic",
-                    "Denmark",
-                    "Georgia",
-                    "Germany",
-                    "Ghana",
-                    "Great Britain",
-                    "Greece",
-                    "Somalia",
-                    "Spain",
-                    "Sri Lanka",
-                    "Sudan",
-                    "Suriname",
-                    "Swaziland",
-                    "Sweden",
-                    "Switzerland",
-                    "Syria",
-                    "Uganda",
-                    "Ukraine",
-                    "United Arab Emirates",
-                    "United Kingdom",
-                    "United States",
-                    "Uruguay",
-                    "Uzbekistan",
-                    "Vanuatu",
-                    "Venezuela",
-                    "Vietnam",
-                    "Yemen",
-                    "Zaire",
-                    "Zambia",
-                    "Zimbabwe"};
-
-            for (String country : countries) {
-                data.add(country);
-            }
+        public Model() {
         }
 
-
-        public Model() {
-            readData();
+        public Model(List<String> initialData) {
+            for(String str : initialData) {
+                data.add(str);
+            }
         }
 
         public void setPattern(String pattern) {

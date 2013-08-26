@@ -26,4 +26,12 @@ public class ItemDaoImpl extends AbstractDao<Item> implements ItemDao {
 
         return DataAccessUtils.singleResult(list);
     }
+
+    @Override
+    public List<String> getAllItemNames() {
+        Query query = getSession().createQuery("select i.name from Item i");
+
+        //noinspection unchecked
+        return query.list();
+    }
 }

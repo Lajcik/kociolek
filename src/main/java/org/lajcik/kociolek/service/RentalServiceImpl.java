@@ -5,6 +5,7 @@ import org.lajcik.kociolek.dao.RentalDao;
 import org.lajcik.kociolek.domain.Item;
 import org.lajcik.kociolek.domain.Rental;
 import org.lajcik.kociolek.util.TicketDispenser;
+import org.lajcik.kociolek.util.TimeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -113,6 +114,7 @@ public class RentalServiceImpl implements RentalService {
         Rental rental = rentalDao.getByTicket(ticketNumber);
 
         rental.setReturnDate(new Date());
+        rental.setMinutesRented(TimeUtils.minuteDiff(rental.getRentDate(), rental.getReturnDate()));
 
         for (RentalListener listener : listeners) {
             listener.itemReturned(rental);
