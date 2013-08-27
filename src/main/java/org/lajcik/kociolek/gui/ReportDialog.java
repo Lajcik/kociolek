@@ -101,7 +101,8 @@ public class ReportDialog extends JDialog implements ActionListener {
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File file = fileChooser.getSelectedFile();
                 if(file.exists()) {
-                    file.delete();
+                    errorLabel.setText("Taki plik już istnieje!");
+                    errorLabel.setForeground(Color.RED);
                 }
                 try {
                     reportService.generateReport(file, dateFrom, dateTo);
@@ -112,7 +113,6 @@ public class ReportDialog extends JDialog implements ActionListener {
                     errorLabel.setForeground(Color.RED);
                 }
             }
-            return;
         }
 
     }
