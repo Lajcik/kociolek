@@ -39,10 +39,18 @@ public class MainPanel extends JPanel {
             }
         });
 
+        JButton aboutButton = new JButton("O Programie");
+        aboutButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                new AboutDialog();
+            }
+        });
+
         buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.LINE_AXIS));
         buttonPanel.add(rentButton);
         buttonPanel.add(Box.createHorizontalGlue());
         buttonPanel.add(raportButton);
+        buttonPanel.add(aboutButton);
         buttonPanel.add(closeButton);
         add(buttonPanel, BorderLayout.PAGE_START);
 
